@@ -2,7 +2,7 @@ import CryptoJS from 'crypto-js';
 
 function fetchData() {
   return fetch(
-    'http://ptx.transportdata.tw/MOTC/v2/Rail/TRA/DailyTimetable/OD/1012/to/1008/2019-05-12',
+    'http://ptx.transportdata.tw/MOTC/v2/Rail/TRA/DailyTimetable/OD/1012/to/1008/2019-05-13',
     {
       headers: getAuthorizationHeader()
     }

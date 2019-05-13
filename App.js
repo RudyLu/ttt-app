@@ -1,11 +1,11 @@
-/**
- * Sample React Native App
+/* Sample React Native App
  * https://github.com/facebook/react-native
  *
  * @format
  * @flow
  */
 
+import Carousel from 'react-native-snap-carousel';
 import React, { Component } from 'react';
 import {
   Platform,
@@ -19,10 +19,90 @@ import {
   Alert,
   FlatList,
   ActivityIndicator,
+  Dimensions
 } from 'react-native';
 
 import fetchData from './data';
-import { blue } from 'ansi-colors';
+
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
+
+function wp (percentage) {
+  const value = (percentage * viewportWidth) / 100;
+  return Math.round(value);
+}
+
+const slideHeight = viewportHeight * 0.36;
+const slideWidth = wp(75);
+const itemHorizontalMargin = wp(2);
+
+export const sliderWidth = viewportWidth;
+export const itemWidth = slideWidth + itemHorizontalMargin * 2;
+
+class MyCarousel extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      entries: [
+        {
+          title: 'Beautiful and dramatic Antelope Canyon',
+          subtitle: 'Lorem ipsum dolor sit amet et nuncat mergitur',
+          illustration: 'https://i.imgur.com/UYiroysl.jpg',
+        },
+        {
+          title: 'Earlier this morning, NYC',
+          subtitle: 'Lorem ipsum dolor sit amet',
+          illustration: 'https://i.imgur.com/UPrs1EWl.jpg',
+        },
+        {
+          title: 'White Pocket Sunset',
+          subtitle: 'Lorem ipsum dolor sit amet et nuncat ',
+          illustration: 'https://i.imgur.com/MABUbpDl.jpg',
+        },
+        {
+          title: 'Acrocorinth, Greece',
+          subtitle: 'Lorem ipsum dolor sit amet et nuncat mergitur',
+          illustration: 'https://i.imgur.com/KZsmUi2l.jpg',
+        },
+        {
+          title: 'The lone tree, majestic landscape of New Zealand',
+          subtitle: 'Lorem ipsum dolor sit amet',
+          illustration: 'https://i.imgur.com/2nCt3Sbl.jpg',
+        },
+        {
+          title: 'Middle Earth, Germany',
+          subtitle: 'Lorem ipsum dolor sit amet',
+          illustration: 'https://i.imgur.com/lceHsT6l.jpg',
+        },
+      ],
+    };
+  }
+
+  _renderItem({ item, index }) {
+    return (
+      <View style={styles.slide}>
+        <Text style={styles.title}>{item.title}</Text>
+        <Greeting />
+      </View>
+    );
+  }
+
+  render() {
+    return (
+      <Carousel
+        ref={c => {
+          this._carousel = c;
+        }}
+        data={this.state.entries}
+        renderItem={this._renderItem}
+        sliderWidth={viewportWidth}
+        itemWidth={viewportWidth}
+        slideStyle={{ width: viewportWidth }}
+        inactiveSlideOpacity={1}
+        inactiveSlideScale={1}
+      />
+    );
+  }
+}
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -41,9 +121,8 @@ class Greeting extends Component {
         return response.json();
       })
       .then(responseJson => {
-
         responseJson.sort((a, b) => {
-          var res =  a.OriginStopTime.DepartureTime < b.OriginStopTime.DepartureTime;
+          var res = a.OriginStopTime.DepartureTime < b.OriginStopTime.DepartureTime;
           console.log(a.OriginStopTime.DepartureTime, b.OriginStopTime.DepartureTime, res);
 
           if (a.OriginStopTime.DepartureTime < b.OriginStopTime.DepartureTime) {
@@ -56,7 +135,6 @@ class Greeting extends Component {
 
           return 0;
         });
-
 
         this.setState(
           {
@@ -81,7 +159,7 @@ class Greeting extends Component {
     }
 
     return (
-      <View style={{ flex: 1, paddingTop: 40 }}>
+      <View style={{ flex: 1 }}>
         <FlatList
           data={this.state.dataSource}
           renderItem={({ item }) => (
@@ -112,7 +190,7 @@ export default class HelloWorldApp extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Greeting />
+        <MyCarousel />
       </View>
     );
   }
@@ -121,6 +199,9 @@ export default class HelloWorldApp extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 40,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   item: {
     padding: 10,
@@ -137,4 +218,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'blue',
   },
+  slide: {
+    flex: 1,
+    backgroundColor: 'silver'
+  }
 });
