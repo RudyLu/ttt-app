@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { Button, StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
+import { Card, Icon, ListItem } from 'react-native-elements';
 
 import fetchData from './data';
+import InputModal from './InputModal';
 
 export default class TimeTable extends Component {
   constructor(props) {
@@ -72,6 +74,8 @@ export default class TimeTable extends Component {
   getItemLayout = (data, index) => ({ length: 100, offset: 100 * index, index });
 
   scrollToIndex = index => {
+    // XXX: fine tune the list item auto scroll later.
+    return;
     this.flatListRef.scrollToIndex({ animated: true, index: index });
   };
 
@@ -82,24 +86,30 @@ export default class TimeTable extends Component {
   render() {
     if (this.state.isLoading) {
       return (
-        <View style={{ flex: 1, padding: 20 }}>
+        <Card title={this.state.title}>
           <ActivityIndicator />
-        </View>
+        </Card>
       );
     }
 
     return (
-      <View style={{ flex: 1 }}>
-        <Text style={styles.time}>{this.state.title}</Text>
+      <Card
+        title={this.state.title}
+        containerStyle={{ flex: 1, borderWidth: 4, marginBottom: 20 }}
+        wrapperStyle={{ flex: 1 }}
+      >
         <FlatList
           data={this.state.dataSource}
-          renderItem={({ item }) => (
-            <View style={styles.item}>
-              <Text style={styles.train}>{item.DailyTrainInfo.TrainNo} 車次</Text>
-              <Text style={styles.time}>
-                {item.OriginStopTime.DepartureTime} - {item.DestinationStopTime.ArrivalTime}
-              </Text>
-            </View>
+          renderItem={({ item, i }) => (
+            <ListItem
+              key={i}
+              leftAvatar={{ title: item.DailyTrainInfo.TrainTypeName.Zh_tw }}
+              title={`${item.OriginStopTime.DepartureTime} - ${
+                item.DestinationStopTime.ArrivalTime
+              }`}
+              subtitle={item.DailyTrainInfo.TrainNo + '車次'}
+              bottomDivider
+            />
           )}
           keyExtractor={({ id }, index) => index + ''}
           ref={ref => {
@@ -107,7 +117,8 @@ export default class TimeTable extends Component {
           }}
           getItemLayout={this.getItemLayout}
         />
-      </View>
+        <InputModal />
+      </Card>
     );
   }
 }

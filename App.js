@@ -12,15 +12,15 @@ import {
   StyleSheet,
   Text,
   View,
-  ScrollView,
   Image,
+  ScrollView,
   TextInput,
-  Button,
   Alert,
-  FlatList,
   ActivityIndicator,
   Dimensions,
 } from 'react-native';
+
+import { Button, Card, Icon, ListItem, Header, ThemeProvider, Avatar } from 'react-native-elements';
 
 import TimeTable from './TimeTable';
 
@@ -86,7 +86,25 @@ const instructions = Platform.select({
   android: 'Double tap R on your keyboard to reload,\n' + 'Shake or press menu button for dev menu',
 });
 
-export default class HelloWorldApp extends Component {
+const theme = {
+  Button: {
+    raised: true,
+  },
+};
+
+const users = [
+  {
+    name: 'brynn',
+    subtitle: 'someone who is capable of ...',
+    avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg',
+  },
+  {
+    name: 'brynn',
+    avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg',
+  },
+];
+
+export default class TimeTableApp extends Component {
   constructor(props) {
     super(props);
     this.state = { text: '' };
@@ -94,9 +112,27 @@ export default class HelloWorldApp extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <MyCarousel />
-      </View>
+      <ThemeProvider theme={theme}>
+        {/*
+        <Card containerStyle={{ padding: 0 }}>
+          {users.map((u, i) => {
+            return (
+              <ListItem
+                key={i}
+                leftAvatar={{ source: { uri: u.avatar } }}
+                title={u.name}
+                subtitle={u.subtitle}
+              />
+            );
+          })}
+        </Card>
+        */}
+
+        <View style={{ flex: 1 }}>
+          <Header centerComponent={{ text: 'TTT', style: { color: '#fff' } }} />
+          <MyCarousel />
+        </View>
+      </ThemeProvider>
     );
   }
 }
@@ -111,5 +147,9 @@ const styles = StyleSheet.create({
   slide: {
     flex: 1,
     backgroundColor: '#EEE',
+  },
+  image: {
+    width: 50,
+    height: 50,
   },
 });
