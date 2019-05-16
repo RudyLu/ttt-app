@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import { Modal, Text, TouchableHighlight, View, Alert } from 'react-native';
+import { Input } from 'react-native-elements';
 
 export default class InputModal extends Component {
-  state = {
-    modalVisible: false,
-  };
-
-  setModalVisible(visible) {
-    this.setState({ modalVisible: visible });
+  constructor(props) {
+    super(props);
+    this.state = { src: '', dst: '' };
   }
 
   render() {
@@ -16,20 +14,17 @@ export default class InputModal extends Component {
         <Modal
           animationType="slide"
           transparent={false}
-          visible={this.state.modalVisible}
+          visible={this.props.visible}
           onRequestClose={() => {
             Alert.alert('Modal has been closed.');
           }}
         >
           <View style={{ marginTop: 22 }}>
             <View>
-              <Text>Hello World!</Text>
+              <Input placeholder="From" onChangeText={text => this.setState({ src: text })} />
+              <Input placeholder="To" onChangeText={text => this.setState({ dst: text })} />
 
-              <TouchableHighlight
-                onPress={() => {
-                  this.setModalVisible(!this.state.modalVisible);
-                }}
-              >
+              <TouchableHighlight onPress={() => this.props.onClose(this.state)}>
                 <Text>Hide Modal</Text>
               </TouchableHighlight>
             </View>

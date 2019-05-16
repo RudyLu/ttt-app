@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
-import { Card, Icon, ListItem } from 'react-native-elements';
+import { Button, Card, Icon, ListItem } from 'react-native-elements';
 
 import fetchData from './data';
 import InputModal from './InputModal';
@@ -8,11 +8,11 @@ import InputModal from './InputModal';
 export default class TimeTable extends Component {
   constructor(props) {
     super(props);
-    this.state = { isLoading: true };
+    this.state = { isLoading: true, modalVisible: false };
   }
 
-  componentDidMount() {
-    return fetchData(this.props.src, this.props.dst)
+  fetchContent = (src, dst) => {
+    return fetchData(src, dst)
       .then(response => {
         return response.json();
       })
@@ -69,6 +69,10 @@ export default class TimeTable extends Component {
       .catch(error => {
         console.error(error);
       });
+  };
+
+  componentDidMount() {
+    this.fetchContent(this.props.src, this.props.dst);
   }
 
   getItemLayout = (data, index) => ({ length: 100, offset: 100 * index, index });
@@ -80,7 +84,23 @@ export default class TimeTable extends Component {
   };
 
   onPress = () => {
-    this.scrollToIndex();
+    this.setModalVisible(!this.state.modalVisible);
+  };
+
+  setModalVisible = visible => {
+    this.setState({ modalVisible: visible });
+  };
+
+  onClose = state => {
+    if (!state || !state.src || !state.dst) {
+      console.warn(state);
+      return;
+    }
+
+    console.log(state);
+    this.setModalVisible(false);
+    this.setState({ isLoading: true });
+    this.fetchContent(state.src, state.dst);
   };
 
   render() {
@@ -95,9 +115,10 @@ export default class TimeTable extends Component {
     return (
       <Card
         title={this.state.title}
-        containerStyle={{ flex: 1, borderWidth: 4, marginBottom: 20 }}
+        containerStyle={{ flex: 1, marginBottom: 20 }}
         wrapperStyle={{ flex: 1 }}
       >
+        <Button title="Edit" onPress={this.onPress} />
         <FlatList
           data={this.state.dataSource}
           renderItem={({ item, i }) => (
@@ -117,7 +138,7 @@ export default class TimeTable extends Component {
           }}
           getItemLayout={this.getItemLayout}
         />
-        <InputModal />
+        <InputModal visible={this.state.modalVisible} onClose={this.onClose} />
       </Card>
     );
   }
